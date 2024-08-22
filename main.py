@@ -50,7 +50,7 @@ def analyze():
     system_role = """Write python code to select relevant data to draw the chart, but do not display it. Please save the data to "data.csv" and the figure to "figure.png". Rotate labels if there are more than 8 entries to make sure they are readable."""
     question_with_context = f"Question: {question}\n\nconn = sqlite3.connect(r'{DATABASE_PATH}')\n\nSchema: \n{schema}"
 
-    text =  get_ai_result("openai", system_role, question_with_context, 2000)
+    text =  get_ai_result("groq", system_role, question_with_context, 2000)
     try:
         matches = find_all(text, "```")
         matches_list = [x for x in matches]
@@ -68,7 +68,7 @@ def analyze():
             "Generate analysis and insights about the data in 5 bullet points."
         )
         analysis_question = f"Question: {question}\nData: \n{data}"
-        analysis = get_ai_result("openai", analysis_system_role, analysis_question, 2000)
+        analysis = get_ai_result("groq", analysis_system_role, analysis_question, 2000)
 
         return jsonify({"data": data, "analysis": analysis})
     except FileNotFoundError:
