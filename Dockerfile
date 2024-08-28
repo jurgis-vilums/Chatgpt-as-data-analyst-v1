@@ -13,6 +13,9 @@ RUN pip3 install --no-cache-dir -r requirements.txt --verbose
 EXPOSE 8080
 
 # Define environment variable
+ENV PORT=8080
+
+# Define environment variable
 ENV FLASK_APP=main.py
 
 # Run the application
