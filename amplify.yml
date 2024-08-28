@@ -1,0 +1,16 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - "pip3 install --no-cache-dir -r requirements.txt --verbose"
+    build:
+      commands:
+        - "python3 app.py"  # Replace with your Flask app's entry point
+artifacts:
+  baseDirectory: /  # Specify the root if necessary
+  files:
+    - '**/*'
+cache:
+  paths:
+    - '/root/.cache/pip'
