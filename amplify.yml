@@ -1,18 +1,12 @@
-version: 1.0
-applications:
-  - appRoot: .  # Specify the root directory of your Flask application
-    backend:
-      phases:
-        preBuild:
-          commands:
-            - "pip3 install --no-cache-dir -r requirements.txt --verbose"
+version: 1
+frontend:
+    phases:
         build:
-          commands:
-            - "python3 main.py"  # Replace with your Flask app's entry point
+            commands:
+                - "pip3 install --no-cache-dir -r requirements.txt --verbose"
     artifacts:
-      baseDirectory: /  # Specify the root if necessary
-      files:
-        - '**/*'
+        baseDirectory: /
+        files:
+            - '**/*'
     cache:
-      paths:
-        - '/root/.cache/pip'
+        paths: []
