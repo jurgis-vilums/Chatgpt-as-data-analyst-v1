@@ -1,7 +1,6 @@
 import os
 from flask import Flask, request, jsonify
 import pandas as pd
-from config import DATABASE_PATH, SCHEMA_PATH
 from ai_providers import get_ai_result
 
 app = Flask(__name__)
@@ -43,12 +42,12 @@ def analyze():
         return jsonify({"error": "No question provided"}), 400
 
     # Read schema
-    with open(SCHEMA_PATH, "r") as schema_file:
+    with open("schema.sql", "r") as schema_file:
         schema = extract_create_table(schema_file.read())
 
     # Generate and execute code
     system_role = """Write python code to select relevant data to draw the chart, but do not display it. Please save the data to "data.csv" and the figure to "figure.png". Rotate labels if there are more than 8 entries to make sure they are readable."""
-    question_with_context = f"Question: {question}\n\nconn = sqlite3.connect(r'{DATABASE_PATH}')\n\nSchema: \n{schema}"
+    question_with_context = f"Question: {question}\n\nconn = sqlite3.connect(r'department_store_new.sqlite')\n\nSchema: \n{schema}"
 
     text =  get_ai_result("groq", system_role, question_with_context, 2000)
     try:
