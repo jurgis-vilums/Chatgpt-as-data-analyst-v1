@@ -14,7 +14,7 @@ question = st.text_input("Enter your question:")
 if st.button("Analyze"):
     if question:
         # Send the request to the Flask backend
-        response = requests.post("http://127.0.0.1:5000/analyze", json={"question": question})
+        response = requests.post("http://127.0.0.1:8080/analyze", json={"question": question})
         
         if response.status_code == 200:
             data = response.json().get("data")

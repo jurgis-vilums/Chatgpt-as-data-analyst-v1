@@ -5,21 +5,25 @@ from groq import Groq
 
 
 def get_openai_result(system_role, question, max_tokens):
-    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-    response = client.chat.completions.create(
-        model="gpt-4",
-        max_tokens=max_tokens,
-        temperature=0,
-        messages=[
-            {"role": "system", "content": system_role},
-            {"role": "user", "content": question},
-        ],
-    )
-    return response.choices[0].message.content
+    try:
+        client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        response = client.chat.completions.create(
+            model="gpt-4",
+            max_tokens=max_tokens,
+            temperature=0,
+            messages=[
+                {"role": "system", "content": system_role},
+                {"role": "user", "content": question},
+            ],
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return {"error": str(e)}
 
 def get_groq_result(system_role, question, max_tokens):
-    client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-    chat_completion = client.chat.completions.create(
+    try:
+        client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+        chat_completion = client.chat.completions.create(
         model="mixtral-8x7b-32768",
         max_tokens=max_tokens,
         temperature=0,
@@ -27,8 +31,10 @@ def get_groq_result(system_role, question, max_tokens):
             {"role": "system", "content": system_role},
             {"role": "user", "content": question},
         ],
-    )
-    return chat_completion.choices[0].message.content
+        )
+        return chat_completion.choices[0].message.content
+    except Exception as e:
+        return {"error": str(e)}
 
 def get_ai_result(provider, system_role, question, max_tokens):
     if provider == "openai":
