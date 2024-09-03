@@ -4,11 +4,11 @@ from groq import Groq
 
 
 
-def get_openai_result(system_role, question, max_tokens):
+def get_openai_result(system_role, question, max_tokens, provider):
     try:
         client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
         response = client.chat.completions.create(
-            model="gpt-4",
+            model=provider,
             max_tokens=max_tokens,
             temperature=0,
             messages=[
@@ -37,8 +37,8 @@ def get_groq_result(system_role, question, max_tokens):
         return {"error": str(e)}
 
 def get_ai_result(provider, system_role, question, max_tokens):
-    if provider == "openai":
-        return get_openai_result(system_role, question, max_tokens)
+    if provider.startswith("gpt"):
+        return get_openai_result(system_role, question, max_tokens, provider)
     elif provider == "groq":
         return get_groq_result(system_role, question, max_tokens)
     else:

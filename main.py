@@ -38,10 +38,10 @@ def generate_code(question, schema, llm):
         py_file.write(python_code)
     return python_code, end_time - start_time
 
-def analyze_data(question, data):
+def analyze_data(question, data, llm):
     analysis_system_role = "Generate analysis and insights about the data in 5 bullet points."
     analysis_question = f"Question: {question}\nData: \n{data}"
-    return get_ai_result("groq", analysis_system_role, analysis_question, 2000)
+    return get_ai_result(llm, analysis_system_role, analysis_question, 2000)
 
 def analyze(llm, question):
     if not question:
@@ -56,7 +56,7 @@ def analyze(llm, question):
 
         df = pd.read_csv("data.csv")
         data = df.to_dict(orient='list')
-        analysis = analyze_data(question, data)
+        analysis = analyze_data(question, data, llm)
 
         return {
             "data": data,

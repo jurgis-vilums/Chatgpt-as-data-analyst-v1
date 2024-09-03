@@ -1,0 +1,14 @@
+{
+    "questions": [
+      "List all customer names and their corresponding emails.",
+      "Count the total number of products supplied by each supplier.",
+      "Retrieve all orders that were placed in February 2018.",
+      "Find the details of departments located in store ID 5.",
+      "Display the names of customers who have made an order with a 'Completed' status.",
+      "Show the total value of products supplied by each supplier.",
+      "Get the names and phone numbers of department stores located in the East chain.",
+      "List all the addresses that have been used by suppliers.",
+      "Retrieve the staff names who have worked in the 'marketing' department.",
+      "Display the product names and their prices for all products supplied by supplier ID 3."
+    ]
+  }
