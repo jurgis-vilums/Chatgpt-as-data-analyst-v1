@@ -76,7 +76,7 @@ def analyze_request():
         if os.path.exists(file):
             os.remove(file)
     question = request.json.get("question")
-    llm = "openai"  # or "openai"
+    llm = "gpt-4o-mini"  # or "openai"
     result = analyze(llm, question)
     if "error" in result:
         return jsonify(result), 500
