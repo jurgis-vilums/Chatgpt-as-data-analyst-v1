@@ -15,7 +15,7 @@ jobs:
     steps:
     - name: Debug GCP Project ID
       run: |
-        echo "Project ID: ${{ secrets.GCP_PROJECT_ID }}"
+        echo "Project ID: ${{ secrets.OPENAI_API_KEY }}"
     - name: Check out the code
       uses: actions/checkout@v2
 
