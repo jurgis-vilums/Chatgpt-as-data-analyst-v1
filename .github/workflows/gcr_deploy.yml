@@ -25,8 +25,8 @@ jobs:
 
     - name: Tag and push Docker image to GCR
       run: |
-        docker tag data-analyst gcr.io/${{ secrets.GCP_PROJECT_ID }}/data-analyst:latest
-        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/data-analyst:latest
+        docker tag data-analyst gcr.io/${{ vars.GCP_PROJECT_ID }}/data-analyst:latest
+        docker push gcr.io/${{ vars.GCP_PROJECT_ID }}/data-analyst:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -39,14 +39,14 @@ jobs:
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v0
       with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        project_id: ${{ vars.GCP_PROJECT_ID }}
+        service_account_key: ${{ vars.GCP_SA_KEY }}
 
     - name: Deploy to Google Cloud Run
       run: |
         gcloud run deploy data-analyst-service \
-          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/data-analyst:latest \
+          --image gcr.io/${{ vars.GCP_PROJECT_ID }}/data-analyst:latest \
           --platform managed \
           --region europe-north1 \
           --allow-unauthenticated \
-          --set-env-vars "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }},GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}"
+          --set-env-vars "OPENAI_API_KEY=${{ vars.OPENAI_API_KEY }},GROQ_API_KEY=${{ vars.GROQ_API_KEY }}"
