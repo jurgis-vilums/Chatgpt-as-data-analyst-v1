@@ -47,3 +47,6 @@ jobs:
           --region europe-north1 \
           --allow-unauthenticated \
           --set-env-vars "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }},GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}"
+    - name: Debug GCP Project ID
+      run: |
+        echo "Project ID: ${{ secrets.GCP_PROJECT_ID }}"
