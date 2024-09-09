@@ -1,15 +1,15 @@
 import os
 import time
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 import pandas as pd
 from ai_providers import get_ai_result
-import subprocess
+import sqlite3
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return send_from_directory('.', 'streamlit_app.html')
+    return "<h1>Flask Application is Running and DEPLOYING!</h1>"
 
 def execute_python_code():
     start_time = time.time()
@@ -83,14 +83,5 @@ def analyze_request():
     return jsonify(result)
 
 if __name__ == "__main__":
-    print("Starting Streamlit...")
-    # Run Streamlit in a subprocess
-    streamlit_process = subprocess.Popen(["streamlit", "run", "streamlit_app.py", "--server.port", "8501", "--server.headless", "true"])
-    
-    print("Starting Flask...")
-    # Run Flask app
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
-
-    # Wait for the Streamlit process to finish (which it won't unless interrupted)
-    streamlit_process.wait()

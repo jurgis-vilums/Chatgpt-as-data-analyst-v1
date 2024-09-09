@@ -15,7 +15,7 @@ COPY . .
 
 VOLUME /department_store_new.sqlite
 # Expose the port the app runs on
-EXPOSE 8080 8501
+EXPOSE 8080
 
 # Run the Flask app
 CMD ["python", "main.py"]
