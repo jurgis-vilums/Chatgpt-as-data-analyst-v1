@@ -1,0 +1,56 @@
+{
+    "tests": [
+      {
+        "key": "1",
+        "vis_query": {
+          "vis_part": "Visualize BAR",
+          "data_part": {
+            "sql_part": "SELECT product, SUM(sales) FROM sales GROUP BY product",
+            "binning": ""
+          },
+          "VQL": "Visualize BAR SELECT product, SUM(sales) FROM sales GROUP BY product"
+        },
+        "chart": "Bar",
+        "db_id": "sales_db",
+        "vis_obj": {
+          "chart": "bar",
+          "x_name": "product",
+          "y_name": "SUM(sales)",
+          "x_data": [],
+          "y_data": [],
+          "classify": []
+        },
+        "nl_queries": [
+          "Show the total sales for each product category",
+          "Create a bar chart of total sales by product",
+          "Visualize the sum of sales for each product using a bar graph"
+        ]
+      },
+      {
+        "key": "2",
+        "vis_query": {
+          "vis_part": "Visualize PIE",
+          "data_part": {
+            "sql_part": "SELECT supplier, COUNT(*) FROM products GROUP BY supplier",
+            "binning": ""
+          },
+          "VQL": "Visualize PIE SELECT supplier, COUNT(*) FROM products GROUP BY supplier"
+        },
+        "chart": "Pie",
+        "db_id": "sales_db",
+        "vis_obj": {
+          "chart": "pie",
+          "x_name": "supplier",
+          "y_name": "COUNT(*)",
+          "x_data": [],
+          "y_data": [],
+          "classify": []
+        },
+        "nl_queries": [
+          "Create a pie chart showing the number of products for each supplier",
+          "Visualize the distribution of products among suppliers using a pie chart",
+          "Show a pie chart of product count by supplier"
+        ]
+      }
+    ]
+  }

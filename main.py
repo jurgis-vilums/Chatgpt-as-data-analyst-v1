@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "<h1>Flask Application is Running!</h1>"
+    return "<h1>Flask Application is Running and DEPLOYING!</h1>"
 
 def execute_python_code():
     start_time = time.time()

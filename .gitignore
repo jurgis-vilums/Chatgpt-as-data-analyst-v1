@@ -6,4 +6,4 @@ figure.png
 streamlit_app.py
 .env
 *.pyc
-.*
+.DS_Store
