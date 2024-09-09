@@ -1,9 +1,9 @@
 import os
 import time
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import pandas as pd
 from ai_providers import get_ai_result
-import sqlite3
+import json
 
 app = Flask(__name__)
 
@@ -75,12 +75,29 @@ def analyze_request():
     for file in files_to_delete:
         if os.path.exists(file):
             os.remove(file)
+    
     question = request.json.get("question")
     llm = "gpt-4o-mini"  # or "openai"
     result = analyze(llm, question)
+    
     if "error" in result:
         return jsonify(result), 500
+    
+    # Check if the image file exists
+    image_path = "figure.png"
+    if not os.path.exists(image_path):
+        return jsonify({"error": "Image not generated"}), 500
+    
+    # Add the image_url to the result
+    result["image_url"] = "/get_image"
+    
+    # Return the result as JSON
     return jsonify(result)
+
+@app.route("/get_image")
+def get_image():
+    image_path = "figure.png"
+    return send_file(image_path, mimetype='image/png')
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 8080))
