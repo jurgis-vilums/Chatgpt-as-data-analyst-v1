@@ -70,29 +70,40 @@ def analyze(llm, question):
 
 @app.route("/analyze", methods=["POST"])
 def analyze_request():
-    # Delete main.py, data.csv, and figure.png if they exist
-    files_to_delete = ["demo.py", "data.csv", "figure.png"]
-    for file in files_to_delete:
-        if os.path.exists(file):
-            os.remove(file)
+    try:
+        # Delete files if they exist
+        files_to_delete = ["demo.py", "data.csv", "figure.png"]
+        for file in files_to_delete:
+            if os.path.exists(file):
+                os.remove(file)
+        
+        # Get request data
+        request_data = request.json
+        question = request_data.get("question")
+        llm = "gpt-4o-mini"  # or "openai"
+        
+        if not question:
+            raise ValueError("No question provided in the request")
+        
+        result = analyze(llm, question)
+        
+        # Check if the image file exists
+        image_path = "figure.png"
+        if not os.path.exists(image_path):
+            raise FileNotFoundError("Image not generated")
+        
+        # Add the image_url to the result
+        result["image_url"] = "/get_image"
+        
+        # Return the result as JSON
+        return jsonify(result)
     
-    question = request.json.get("question")
-    llm = "gpt-4o-mini"  # or "openai"
-    result = analyze(llm, question)
-    
-    if "error" in result:
-        return jsonify(result), 500
-    
-    # Check if the image file exists
-    image_path = "figure.png"
-    if not os.path.exists(image_path):
-        return jsonify({"error": "Image not generated"}), 500
-    
-    # Add the image_url to the result
-    result["image_url"] = "/get_image"
-    
-    # Return the result as JSON
-    return jsonify(result)
+    except Exception as e:
+        error_response = {
+            "error": str(e),
+            "request_body": str(request.data)
+        }
+        return jsonify(error_response), 500
 
 @app.route("/get_image")
 def get_image():
