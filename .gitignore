@@ -7,3 +7,4 @@ streamlit_app.py
 .env
 *.pyc
 .DS_Store
+.aider*

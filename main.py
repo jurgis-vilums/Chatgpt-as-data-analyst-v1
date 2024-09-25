@@ -3,13 +3,16 @@ import time
 from flask import Flask, request, jsonify, send_file
 import pandas as pd
 from ai_providers import get_ai_result
-import json
+from all_things_notion import fetch_notes_string
+from filter_generator import filter_for_notion
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
     return "<h1>Flask Application is Running and DEPLOYING!</h1>"
+
+
 
 def execute_python_code():
     start_time = time.time()
@@ -25,15 +28,21 @@ def extract_python_code(text):
     except ValueError:
         return text
 
-def generate_code(question, schema, llm):
+
+def generate_code(question, info_about_db, llm, question_source):
     system_role = """Write python code to select relevant data to draw the chart, but do not display it. Please save the data to "data.csv" and the figure to "figure.png". Rotate labels if there are more than 8 entries to make sure they are readable."""
-    question_with_context = f"Question: {question}\n\nconn = sqlite3.connect(r'department_store_new.sqlite')\n\nSchema: \n{schema}"
+    if question_source == "notion":
+        filter = filter_for_notion(question)
+        question_with_context = f"Question: {question}\n\nI already managed to create wokring fetch_notes function, so add at the begiining of code \"from all_things_notion import fetch_notes\". The file: \n{info_about_db} \n the filter is: \n{filter}(you will have to pass it as an argument for the fetch_notes function)"
+    else:
+        question_with_context = f"Question: {question}\n\nconn = sqlite3.connect(r'department_store_new.sqlite')\n\nSchema: \n{info_about_db}"
 
     start_time = time.time()
     ai_response = get_ai_result(llm, system_role, question_with_context, 2000)
     python_code = extract_python_code(ai_response)
     end_time = time.time()
 
+    python_code = str(python_code) if python_code is not None else ""
     with open("demo.py", "w") as py_file:
         py_file.write(python_code)
     return python_code, end_time - start_time
@@ -43,15 +52,18 @@ def analyze_data(question, data, llm):
     analysis_question = f"Question: {question}\nData: \n{data}"
     return get_ai_result(llm, analysis_system_role, analysis_question, 2000)
 
-def analyze(llm, question):
-    if not question:
-        raise ValueError("No question provided")
+def analyze(llm, question, question_source):
 
     try:
-        with open("schema.sql", "r") as schema_file:
-            schema = schema_file.read()
+        if question_source == "notion":
+            info_about_db = fetch_notes_string
+        elif question_source == "department_database":
+            with open("schema.sql", "r") as schema_file:
+                info_about_db = schema_file.read()
+        else:
+            raise ValueError("No question provided")
 
-        generated_code, code_gen_time = generate_code(question, schema, llm)
+        generated_code, code_gen_time = generate_code(question, info_about_db, llm, question_source)
         code_exec_time = execute_python_code()
 
         df = pd.read_csv("data.csv")
@@ -70,6 +82,7 @@ def analyze(llm, question):
 
 @app.route("/analyze", methods=["POST"])
 def analyze_request():
+
     try:
         # Delete files if they exist
         files_to_delete = ["demo.py", "data.csv", "figure.png"]
@@ -77,15 +90,13 @@ def analyze_request():
             if os.path.exists(file):
                 os.remove(file)
         
-        # Get request data
-        request_data = request.json
-        question = request_data.get("question")
+        request_data = request.json or {}
+
         llm = "gpt-4o-mini"  # or "openai"
+        question = request_data.get("question")
+        question_source = "department_database"
         
-        if not question:
-            raise ValueError("No question provided in the request")
-        
-        result = analyze(llm, question)
+        result = analyze(llm, question, question_source)
         
         # Check if the image file exists
         image_path = "figure.png"
@@ -109,6 +120,41 @@ def analyze_request():
 def get_image():
     image_path = "figure.png"
     return send_file(image_path, mimetype='image/png')
+
+@app.route('/wake-up', methods=['GET'])
+def wake_up():
+    return jsonify({"status": "awake"}), 200
+
+@app.route('/save_response', methods=['POST'])
+def save_response():
+    try:
+        data = request.json
+        python_code = data.get('python_code')
+        
+        if not python_code:
+            return jsonify({"error": "No Python code provided"}), 400
+
+        conn = sqlite3.connect('question_responses.db')
+        cursor = conn.cursor()
+
+        # Create table if it doesn't exist
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS responses
+            (id INTEGER PRIMARY KEY AUTOINCREMENT,
+             python_code TEXT)
+        ''')
+
+        # Insert the new entry
+        cursor.execute('INSERT INTO responses (python_code) VALUES (?)', (python_code,))
+        conn.commit()
+
+        new_id = cursor.lastrowid
+        conn.close()
+
+        return jsonify({"message": "Response saved successfully", "id": new_id}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 8080))

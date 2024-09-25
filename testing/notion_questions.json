@@ -1,0 +1,23 @@
+{
+  "questions": [
+    "What are the tasks that are in progress and have a high priority?",
+    "Which tasks were created after 2024-09-01 and are still not started?",
+    "Show all tasks with the tag the_content that are marked as Keep.",
+    "Which tasks have a Done status and were last updated after 2024-09-10?",
+    "How many tasks have a Priority of medium and are scheduled for a specific date (Dates GC)?",
+    "Which tasks with the tag anna are in progress and have a start date in Dates GC?",
+    "What tasks were created before 2024-09-15 and are tagged with Lauris and marked as Keep?",
+    "How many tasks have been updated in the past week and have the status of Not started?",
+    "List all tasks with the tag notion that have a low priority and were updated in the last 24 hours.",
+    "What are the tasks with the tag bussiness that have the status Done but are not marked for keeping?",
+    "Show all tasks created before 2024-09-05 with the tag frāzes that are still in progress.",
+    "Which tasks tagged with reminders are set for specific dates in Dates GC and are marked as Keep?",
+    "List all tasks with Priority of high that are not started and were created after 2024-09-01.",
+    "What are the tasks tagged with anna and are in progress?"
+  ],
+  "test_parameters": {
+    "model": "gpt-4o-mini",
+    "question_source": "notion",
+    "temperature": 0.7
+  }
+}

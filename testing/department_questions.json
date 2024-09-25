@@ -11,4 +11,11 @@
       "Retrieve the staff names who have worked in the 'marketing' department.",
       "Display the product names and their prices for all products supplied by supplier ID 3."
     ]
+    ,
+  "test_parameters": {
+    "model": "gpt-4o-mini",
+    "question_source": "department_database",
+    "temperature": 0.7
   }
+  
+}
