@@ -2,12 +2,14 @@ import os
 import sqlite3
 import time
 from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS  # Add this import
 import pandas as pd
 from ai_providers import get_ai_result
 from all_things_notion import fetch_notes_string
 from filter_generator import filter_for_notion
 
 app = Flask(__name__)
+CORS(app)  # Add this line to enable CORS for all routes
 
 @app.route("/")
 def home():
@@ -31,7 +33,7 @@ def extract_python_code(text):
 
 
 def generate_code(question, info_about_db, llm, question_source):
-    system_role = """Write python code to select relevant data to draw the chart, but do not display it. Please save the data to "data.csv" and the figure to "figure.png". Rotate labels if there are more than 8 entries to make sure they are readable."""
+    system_role = """Write python code to select relevant data to draw the chart, but do not display it. Please save the data to "data.csv" and the figure to "figure.png". Pick only the top 8 entries to make sure they are readable, also ro"""
     if question_source == "notion":
         filter = filter_for_notion(question)
         question_with_context = f"Question: {question}\n\nI already managed to create wokring fetch_notes function, so add at the begiining of code \"from all_things_notion import fetch_notes\". The file: \n{info_about_db} \n the filter is: \n{filter}(you will have to pass it as an argument for the fetch_notes function)"
