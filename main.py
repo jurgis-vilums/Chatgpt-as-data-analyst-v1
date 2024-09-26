@@ -1,4 +1,5 @@
 import os
+import sqlite3
 import time
 from flask import Flask, request, jsonify, send_file
 import pandas as pd
@@ -128,24 +129,22 @@ def wake_up():
 @app.route('/save_response', methods=['POST'])
 def save_response():
     try:
-        data = request.json
-        python_code = data.get('python_code')
-        
-        if not python_code:
-            return jsonify({"error": "No Python code provided"}), 400
+        data = request.json or {}
+        code = data.get('code')
+        notifyMeWhen = data.get('notifyMeWhen')
 
-        conn = sqlite3.connect('question_responses.db')
+        conn = sqlite3.connect('notify_me_when.db')
         cursor = conn.cursor()
-
         # Create table if it doesn't exist
         cursor.execute('''
-            CREATE TABLE IF NOT EXISTS responses
+            CREATE TABLE IF NOT EXISTS reminders
             (id INTEGER PRIMARY KEY AUTOINCREMENT,
-             python_code TEXT)
+             code TEXT,
+             notifyMeWhenDone BOOLEAN)
         ''')
 
         # Insert the new entry
-        cursor.execute('INSERT INTO responses (python_code) VALUES (?)', (python_code,))
+        cursor.execute('INSERT INTO reminders (code, notifyMeWhenDone) VALUES (?, ?)', (code, notifyMeWhen))
         conn.commit()
 
         new_id = cursor.lastrowid
